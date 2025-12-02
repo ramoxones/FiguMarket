@@ -1,0 +1,1 @@
+Este directorio contiene imágenes e iconos para el frontend.
