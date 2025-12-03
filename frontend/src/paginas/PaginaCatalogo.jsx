@@ -34,7 +34,6 @@ export function PaginaCatalogo() {
   const [hasMore, setHasMore] = useState(true)
   const loadMoreRef = useRef(null)
   const [meta, setMeta] = useState({ min_precio: null, max_precio: null, meses: [] })
-  const [backendReady, setBackendReady] = useState(false)
 
   useEffect(() => {
     window.scrollTo(0, 0)
@@ -104,24 +103,10 @@ export function PaginaCatalogo() {
   useEffect(() => {
     let mounted = true
     ;(async () => {
-      const sleep = (ms) => new Promise((r) => setTimeout(r, ms))
-      let ok = false
-      for (let i = 0; i < 30; i++) {
-        const m = await getFigurasMetadata()
-        if (m?.ok) {
-          if (mounted) {
-            setMeta(m.data || { min_precio: null, max_precio: null, meses: [] })
-            setBackendReady(true)
-          }
-          ok = true
-          break
-        }
-        await sleep(2000)
-      }
-      if (ok) {
-        await loadPage(0)
-        if (mounted) setCargando(false)
-      }
+      const m = await getFigurasMetadata()
+      if (m?.ok) setMeta(m.data || { min_precio: null, max_precio: null, meses: [] })
+      await loadPage(0)
+      if (mounted) setCargando(false)
     })()
     return () => { mounted = false }
   }, [])

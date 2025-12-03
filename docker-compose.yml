@@ -31,12 +31,6 @@ services:
       - "8080:80"
     depends_on:
       - backend-php
-    healthcheck:
-      test: ["CMD-SHELL", "wget -q --spider http://localhost/healthz || exit 1"]
-      interval: 10s
-      timeout: 3s
-      retries: 12
-      start_period: 60s
 
   frontend:
     build:
@@ -45,8 +39,7 @@ services:
     ports:
       - "8081:80"
     depends_on:
-      backend-nginx:
-        condition: service_healthy
+      - backend-nginx
 
 volumes:
   db_data:
