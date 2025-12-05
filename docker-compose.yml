@@ -7,8 +7,8 @@ services:
       MYSQL_PASSWORD: figu
       MYSQL_ROOT_PASSWORD: rootpass
     volumes:
-      - db_data:/var/lib/mysql
       - ./backend/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+      - db_data:/var/lib/mysql
 
   backend-php:
     build:
