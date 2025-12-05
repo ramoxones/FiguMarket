@@ -60,12 +60,12 @@ export function PaginaInicio() {
     const ids = items.map((f) => f.id)
     if (!ids.length) { setSeguimientosMap({}); return }
     let active = true
-    ;(async () => {
-      try {
-        const res = await getSeguimientoCounts(ids)
-        if (active && res?.ok && typeof res.data === 'object') setSeguimientosMap(res.data)
-      } catch { if (active) setSeguimientosMap({}) }
-    })()
+      ; (async () => {
+        try {
+          const res = await getSeguimientoCounts(ids)
+          if (active && res?.ok && typeof res.data === 'object') setSeguimientosMap(res.data)
+        } catch { if (active) setSeguimientosMap({}) }
+      })()
     return () => { active = false }
   }, [items])
   const destacadas = useMemo(() => {
@@ -125,7 +125,7 @@ export function PaginaInicio() {
           <div className="mb-1 text-sm font-semibold text-gray-700">Novedades Proximas Figuras</div>
           <h2 className="text-3xl font-bold flex items-center gap-2">
             <span>Figuras destacadas</span>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 text-[#FECE00]"><path d="M12 2l3 7h7l-5.5 4.5L18 22l-6-4-6 4 1.5-8.5L2 9h7l3-7z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-5 w-5 text-[#FECE00]"><path d="M12 2l3 7h7l-5.5 4.5L18 22l-6-4-6 4 1.5-8.5L2 9h7l3-7z" /></svg>
           </h2>
           <p className="mt-2 text-gray-600">Explora las últimas figuras destacadas.</p>
           <div className="mt-4">
@@ -135,44 +135,44 @@ export function PaginaInicio() {
       )}
       {/* Botones de marcas hacia catálogo con filtro preseleccionado */}
       {!cargandoFiguras && (
-      <div className="mt-32 mb-32 grid grid-cols-1 sm:grid-cols-3 gap-6">
-        <Link
-          to="/catalogo?categoria=marvel"
-          className="relative overflow-hidden h-24 sm:h-28 rounded-xl border shadow bg-[#ED1D24] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-[#ED1D24] transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
-          aria-label="Marvel"
-        >
-          <img
-            src="/marvel.svg"
-            alt="Marvel"
-            className="absolute inset-0 w-full h-full object-contain"
-            loading="lazy"
-          />
-        </Link>
-        <Link
-          to="/catalogo?categoria=dc"
-          className="relative overflow-hidden h-24 sm:h-28 rounded-xl border shadow bg-white hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-black transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
-          aria-label="DC"
-        >
-          <img
-            src="/dc.svg"
-            alt="DC"
-            className="absolute inset-0 w-full h-full object-contain p-2"
-            loading="lazy"
-          />
-        </Link>
-        <Link
-          to="/catalogo?categoria=star%20wars"
-          className="relative overflow-hidden h-24 sm:h-28 rounded-xl border shadow bg-black hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-black transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
-          aria-label="Star Wars"
-        >
-          <img
-            src="/star-wars.svg"
-            alt="Star Wars"
-            className="absolute inset-0 w-full h-full object-contain p-2"
-            loading="lazy"
-          />
-        </Link>
-      </div>
+        <div className="mt-32 mb-32 grid grid-cols-1 sm:grid-cols-3 gap-6">
+          <Link
+            to="/catalogo?categoria=marvel"
+            className="relative overflow-hidden h-24 sm:h-28 rounded-xl border shadow bg-[#ED1D24] hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-[#ED1D24] transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
+            aria-label="Marvel"
+          >
+            <img
+              src="/marvel.svg"
+              alt="Marvel"
+              className="absolute inset-0 w-full h-full object-contain"
+              loading="lazy"
+            />
+          </Link>
+          <Link
+            to="/catalogo?categoria=dc"
+            className="relative overflow-hidden h-24 sm:h-28 rounded-xl border shadow bg-white hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-black transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
+            aria-label="DC"
+          >
+            <img
+              src="/dc.svg"
+              alt="DC"
+              className="absolute inset-0 w-full h-full object-contain p-2"
+              loading="lazy"
+            />
+          </Link>
+          <Link
+            to="/catalogo?categoria=star%20wars"
+            className="relative overflow-hidden h-24 sm:h-28 rounded-xl border shadow bg-black hover:brightness-95 focus:outline-none focus:ring-2 focus:ring-black transition-transform duration-200 ease-out hover:-translate-y-1 hover:shadow-lg"
+            aria-label="Star Wars"
+          >
+            <img
+              src="/star-wars.svg"
+              alt="Star Wars"
+              className="absolute inset-0 w-full h-full object-contain p-2"
+              loading="lazy"
+            />
+          </Link>
+        </div>
       )}
 
       {/* Slider de noticias (fondo en tarjeta) */}
@@ -261,7 +261,7 @@ export function PaginaInicio() {
               } : undefined}
             >
               {items.map((f) => (
-                <TarjetaFigura key={f.id} figura={f} seguimientoCount={Number(seguimientosMap?.[f.id] || 0)} featured />
+                <TarjetaFigura key={f.id} figura={f} seguimientoCount={Number(seguimientosMap?.[f.id] || 0)} />
               ))}
             </div>
           )}

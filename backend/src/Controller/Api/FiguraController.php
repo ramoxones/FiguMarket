@@ -58,7 +58,12 @@ class FiguraController
             ->setParameter('vend', 'vendido');
 
         if (is_array($escala) && count($escala) > 0) { $qbIds->andWhere('f.escala IN (:esc)')->setParameter('esc', $escala); }
-        if (is_array($categoria) && count($categoria) > 0) { $qbIds->andWhere('f.categoria IN (:cat)')->setParameter('cat', $categoria); }
+        // Filtro por categoría: aceptar tanto array como string y normalizar trim/lower
+        if ((is_array($categoria) && count($categoria) > 0) || (is_string($categoria) && trim($categoria) !== '')) {
+            $rawCats = is_array($categoria) ? $categoria : [$categoria];
+            $catLC = array_values(array_filter(array_map(fn($s) => strtolower(trim((string)$s)), $rawCats), fn($s) => $s !== ''));
+            if (count($catLC) > 0) { $qbIds->andWhere("LOWER(TRIM(f.categoria)) IN (:cat)")->setParameter('cat', $catLC); }
+        }
         if (is_array($estadoFigura) && count($estadoFigura) > 0) { $qbIds->andWhere('f.estadoFigura IN (:ef)')->setParameter('ef', $estadoFigura); }
         if (is_array($estado) && count($estado) > 0) { $qbIds->andWhere('f.estado IN (:est)')->setParameter('est', $estado); }
 

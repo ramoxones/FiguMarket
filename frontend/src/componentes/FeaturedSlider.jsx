@@ -61,7 +61,7 @@ export default function FeaturedSlider({ items = [], perPage, autoAdvanceMs = 50
 
   return (
     <div
-      className="rounded-lg bg-[#FECE00]/80 p-4"
+      className="rounded-lg bg-[#FECE00]/80 p-2 sm:p-4"
       onMouseEnter={() => (pauseRef.current = true)}
       onMouseLeave={() => (pauseRef.current = false)}
     >
@@ -72,11 +72,9 @@ export default function FeaturedSlider({ items = [], perPage, autoAdvanceMs = 50
         >
           {grupos.map((grupo, gi) => (
             <div key={gi} className="min-w-full">
-              <div className="grid gap-8 items-stretch px-2" style={{ gridTemplateColumns: `repeat(${pageSize}, minmax(0, 1fr))` }}>
+              <div className="grid gap-2 sm:gap-6 items-stretch px-0" style={{ gridTemplateColumns: `repeat(${pageSize}, minmax(0, 1fr))` }}>
                 {grupo.map((f) => (
-                  <div key={f.id} className="shadow-md hover:shadow-lg rounded-lg transition-shadow">
-                    <TarjetaFigura figura={f} featured seguimientoCount={Number(seguimientosMap?.[f.id] || 0)} />
-                  </div>
+                  <TarjetaFigura key={f.id} figura={f} featured seguimientoCount={Number(seguimientosMap?.[f.id] || 0)} />
                 ))}
               </div>
             </div>

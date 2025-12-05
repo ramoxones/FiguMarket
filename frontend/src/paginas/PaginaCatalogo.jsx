@@ -9,8 +9,12 @@ export function PaginaCatalogo() {
   useEffect(() => { document.title = 'FiguMarket - Catálogo' }, [])
   const [figuras, setFiguras] = useState([])
   const [cargando, setCargando] = useState(true)
-  const [filtros, setFiltros] = useState({ escala: [], categoria: [], estado: [], estado_figura: [], precioRango: null, precioMin: null, precioMax: null, fecha: null, fechaDia: null })
   const { search } = useLocation()
+  const [filtros, setFiltros] = useState(() => {
+    const params = new URLSearchParams(search)
+    const cat = (params.get('categoria') || '').toLowerCase()
+    return { escala: [], categoria: cat ? [cat] : [], estado: [], estado_figura: [], precioRango: null, precioMin: null, precioMax: null, fecha: null, fechaDia: null }
+  })
   const [ordenPrecio, setOrdenPrecio] = useState(null) // 'asc' | 'desc' | null
   const [ordenFecha, setOrdenFecha] = useState(null) // 'newest' | 'oldest' | null
   const [bgShift, setBgShift] = useState(0)
@@ -71,13 +75,17 @@ export function PaginaCatalogo() {
     if (ordenFecha) params.ordenFecha = ordenFecha
     return params
   }
-  const loadPage = async (nextOffset) => {
-    if (fetchingRef.current) return
+  const loadPage = async (nextOffset, opts = {}) => {
+    const force = !!opts.force
+    if (fetchingRef.current && !force) return
     fetchingRef.current = true
     const res = await getFiguras(buildParams(nextOffset))
     if (res?.ok) {
       const nuevos = Array.isArray(res.data) ? res.data : []
       setFiguras((prev) => {
+        if (nextOffset === 0) {
+          return nuevos
+        }
         const ids = new Set(prev.map((x) => x.id))
         const uniques = nuevos.filter((x) => !ids.has(x.id))
         return [...prev, ...uniques]
@@ -105,7 +113,7 @@ export function PaginaCatalogo() {
     ;(async () => {
       const m = await getFigurasMetadata()
       if (m?.ok) setMeta(m.data || { min_precio: null, max_precio: null, meses: [] })
-      await loadPage(0)
+      await loadPage(0, { force: true })
       if (mounted) setCargando(false)
     })()
     return () => { mounted = false }
@@ -221,8 +229,9 @@ export function PaginaCatalogo() {
     setOffset(0)
     setHasMore(true)
     setCargando(true)
+    fetchingRef.current = false
     ;(async () => {
-      await loadPage(0)
+      await loadPage(0, { force: true })
       setCargando(false)
     })()
   }, [filtros, ordenPrecio, ordenFecha])

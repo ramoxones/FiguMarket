@@ -4,12 +4,12 @@ import { Boton } from './Boton.jsx'
 import { formatCurrencyEUR } from '../utils/index.js'
 import { VisorImagen } from './VisorImagen.jsx'
 import { useFavoritos } from '../contextos/ProveedorFavoritos.jsx'
- 
+
 import { useAuth } from '../contextos/ProveedorAuth.jsx'
 import { getSeguimientoCount } from '../servicios/seguimientos.js'
 import { resolveMediaUrl } from '../utils/media.js'
 
-export function TarjetaFigura({ figura, compact = false, featured = false, showVisibilityControl = false, onToggleDisponible, showOwnerActions = false, onEdit, onDelete, seguimientoCount = 0 }) {
+export function TarjetaFigura({ figura, compact = false, featured = false, homeTall = false, showVisibilityControl = false, onToggleDisponible, showOwnerActions = false, onEdit, onDelete, seguimientoCount = 0 }) {
   const {
     id,
     nombre,
@@ -50,7 +50,7 @@ export function TarjetaFigura({ figura, compact = false, featured = false, showV
       setLocalSeguimientoCount((c) => Math.max(0, Number(c || 0)))
     }
   }
-  
+
 
   const startCrossfade = (prevImgUrl) => {
     if (fadeTimer.current) clearTimeout(fadeTimer.current)
@@ -89,10 +89,12 @@ export function TarjetaFigura({ figura, compact = false, featured = false, showV
   const publicado = fecha_publicacion ? new Date(fecha_publicacion).toLocaleDateString('es-ES') : ''
 
   const imgHeights = featured
-    ? 'h-72 sm:h-80 lg:h-[22rem]'
-    : compact
-      ? 'h-48 sm:h-56 lg:h-64'
-      : 'h-56 sm:h-72 lg:h-80'
+    ? 'h-[26rem] sm:h-[28rem] lg:h-[30rem]'
+    : homeTall
+      ? 'h-52 sm:h-64 lg:h-72'
+      : compact
+        ? 'h-48 sm:h-56 lg:h-64'
+        : 'h-64 sm:h-80 lg:h-96'
   const bodyPadding = compact ? 'p-2.5' : 'p-3'
   const titleSize = compact ? 'text-base' : 'text-lg'
   const descClamp = compact ? 'line-clamp-1' : 'line-clamp-2'
@@ -118,7 +120,7 @@ export function TarjetaFigura({ figura, compact = false, featured = false, showV
       <div className="relative">
         {destacado && (
           <span className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-md bg-[#FECE00] text-black text-xs font-semibold px-2 py-1 shadow">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4"><path d="M12 2l3 7h7l-5.5 4.5L18 22l-6-4-6 4 1.5-8.5L2 9h7l3-7z"/></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4"><path d="M12 2l3 7h7l-5.5 4.5L18 22l-6-4-6 4 1.5-8.5L2 9h7l3-7z" /></svg>
             Destacado
           </span>
         )}
@@ -141,9 +143,9 @@ export function TarjetaFigura({ figura, compact = false, featured = false, showV
         {hasImages && imagenUrls.length > 1 && (
           <>
             <button aria-label="Anterior" onClick={prev}
-                    className="hidden md:inline-flex absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 hover:bg-white border px-2 py-1 text-gray-700">‹</button>
+              className="hidden md:inline-flex absolute left-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 hover:bg-white border px-2 py-1 text-gray-700">‹</button>
             <button aria-label="Siguiente" onClick={next}
-                    className="hidden md:inline-flex absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 hover:bg-white border px-2 py-1 text-gray-700">›</button>
+              className="hidden md:inline-flex absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-white/80 hover:bg-white border px-2 py-1 text-gray-700">›</button>
             <div className="hidden md:flex absolute bottom-2 left-0 right-0 justify-center gap-1">
               {imagenUrls.map((_, i) => (
                 <span key={i} className={`h-2 w-2 rounded-full ${i === index ? 'bg-brand' : 'bg-white/70 border'}`}></span>
@@ -207,8 +209,8 @@ export function TarjetaFigura({ figura, compact = false, featured = false, showV
                   className="inline-flex items-center justify-center h-8 w-8 rounded-full border text-yellow-500 hover:text-yellow-600 hover:bg-yellow-50 focus:outline-none focus:ring-2 focus:ring-yellow-300"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
-                    <path d="M12 20h9"/>
-                    <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z"/>
+                    <path d="M12 20h9" />
+                    <path d="M16.5 3.5a2.121 2.121 0 1 1 3 3L7 19l-4 1 1-4 12.5-12.5z" />
                   </svg>
                 </button>
                 <button
@@ -219,7 +221,7 @@ export function TarjetaFigura({ figura, compact = false, featured = false, showV
                   className="inline-flex items-center justify-center h-8 w-8 rounded-full border text-red-600 hover:text-red-700 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-300"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
-                    <path d="M9 3h6l1 2h5v2H3V5h5l1-2zm-1 6h8l-1 10H9L8 9z"/>
+                    <path d="M9 3h6l1 2h5v2H3V5h5l1-2zm-1 6h8l-1 10H9L8 9z" />
                   </svg>
                 </button>
               </div>
