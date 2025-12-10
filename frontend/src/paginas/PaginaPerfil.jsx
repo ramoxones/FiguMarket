@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../contextos/ProveedorAuth.jsx'
 import { getUsuario } from '../servicios/usuarios.js'
-import { getFiguras, actualizarFigura, borrarFigura } from '../servicios/figuras.js'
+import { getMisFiguras, actualizarFigura, borrarFigura } from '../servicios/figuras.js'
 import { TarjetaFigura } from '../componentes/TarjetaFigura.jsx'
 import { resolveMediaUrl } from '../utils/media.js'
  
@@ -40,11 +40,10 @@ export function PaginaPerfil() {
           setCargandoPerfil(false)
         }
       })
-      getFiguras().then((res) => {
+      getMisFiguras().then((res) => {
         if (mounted) {
           if (res.ok) {
-            const propias = (res.data || []).filter((f) => f?.usuario_id === usuario.id)
-            setMisFiguras(propias)
+            setMisFiguras(res.data || [])
           }
           setCargandoMisFiguras(false)
         }

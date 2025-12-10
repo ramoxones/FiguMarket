@@ -7,6 +7,7 @@ use App\Entity\Imagen;
 use App\Entity\Mensaje;
 use App\Entity\ConversacionArchivada;
 use App\Repository\FiguraRepository;
+use App\Service\JwtService;
 use App\Repository\UsuarioRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,7 +17,7 @@ use Symfony\Component\Routing\Annotation\Route;
 #[Route('/api/figuras')]
 class FiguraController
 {
-    public function __construct(private EntityManagerInterface $em, private FiguraRepository $repo, private UsuarioRepository $usuarios) {}
+    public function __construct(private EntityManagerInterface $em, private FiguraRepository $repo, private UsuarioRepository $usuarios, private JwtService $jwt) {}
 
     #[Route('', name: 'api_figuras_index', methods: ['GET'])]
     public function index(Request $request): JsonResponse
@@ -116,6 +117,40 @@ class FiguraController
         $pos = [];
         foreach ($ids as $idx => $fid) { $pos[$fid] = $idx; }
         usort($items, fn(Figura $a, Figura $b) => ($pos[$a->getId()] ?? 0) <=> ($pos[$b->getId()] ?? 0));
+        $figuras = array_map(fn(Figura $f) => $f->toArray(), $items);
+        return new JsonResponse($figuras, 200);
+    }
+
+    #[Route('/mias', name: 'api_figuras_mias', methods: ['GET'])]
+    public function mias(Request $request): JsonResponse
+    {
+        $auth = $request->headers->get('Authorization', '');
+        if (!str_starts_with($auth, 'Bearer ')) {
+            return new JsonResponse(['error' => 'No autorizado'], 401);
+        }
+        $token = substr($auth, 7);
+        $claims = $this->jwt->verifyToken($token);
+        if (!$claims || !isset($claims['sub'])) {
+            return new JsonResponse(['error' => 'Token inválido'], 401);
+        }
+        $actorId = (int)$claims['sub'];
+
+        $limitParam = $request->query->get('limit');
+        $offsetParam = $request->query->get('offset');
+        $limit = is_null($limitParam) ? null : max(1, min(200, (int)$limitParam));
+        $offset = max(0, (int)($offsetParam ?? 0));
+
+        $qb = $this->repo->createQueryBuilder('f')
+            ->leftJoin('f.imagenes', 'i')
+            ->addSelect('i')
+            ->where('f.usuario = :uid')
+            ->setParameter('uid', $actorId)
+            ->orderBy('f.destacado', 'DESC')
+            ->addOrderBy('f.fechaPublicacion', 'DESC')
+            ->addOrderBy('f.id', 'ASC');
+        if (!is_null($limit)) { $qb->setMaxResults($limit); }
+        if ($offset > 0) { $qb->setFirstResult($offset); }
+        $items = $qb->getQuery()->getResult();
         $figuras = array_map(fn(Figura $f) => $f->toArray(), $items);
         return new JsonResponse($figuras, 200);
     }
